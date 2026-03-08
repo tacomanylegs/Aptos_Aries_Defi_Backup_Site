@@ -84,10 +84,6 @@ export interface AssetConfig {
   faMetadata?: string;
 }
 
-/** Amnis Staked APT */
-export const STAPT_COIN_TYPE =
-  "0x111ae3e5bc816a5e63c2da97d0aa3886519e0cd5e4b046659fa35796bd11542a::stapt_token::StakedApt";
-
 export const SUPPORTED_ASSETS: AssetConfig[] = [
   {
     name: "Tether USD",
@@ -97,21 +93,23 @@ export const SUPPORTED_ASSETS: AssetConfig[] = [
     faMetadata: USDT_FA_METADATA,
     icon: "💵",
   },
-  {
-    name: "USD Coin",
-    symbol: "USDC",
-    decimals: 6,
-    coinType: USDC_COIN_TYPE,
-    faMetadata: USDC_FA_METADATA,
-    icon: "💲",
-  },
-  {
-    name: "Amnis Staked APT",
-    symbol: "stAPT",
-    decimals: 8,
-    coinType: STAPT_COIN_TYPE,
-    icon: "🔵",
-  },
+  /*{
+  name: "USD Coin",
+  symbol: "USDC",
+  decimals: 6,
+  coinType: USDC_COIN_TYPE,
+  faMetadata: USDC_FA_METADATA,
+  icon: "💲",
+},
+
+{
+  name: "Amnis Staked APT",
+  symbol: "stAPT",
+  decimals: 8,
+  coinType: "0x111ae3e5bc816a5e63c2da97d0aa3886519e0cd5e4b046659fa35796bd11542a::stapt_token::StakedApt",
+  icon: "🔵",
+},
+*/
 ];
 
 // ============================================================
