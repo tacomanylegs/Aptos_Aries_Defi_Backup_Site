@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Header from "./components/Header";
 import Dashboard from "./components/Dashboard";
 import TransactionModal from "./components/TransactionModal";
+import PasswordGate from "./components/PasswordGate";
 import { useWallet } from "./hooks/useWallet";
 import { buildClaimRewardsPayload, TxPayload } from "./lib/aries";
 import { USDT_COIN_TYPE, DEFAULT_PROFILES } from "./config";
@@ -14,7 +15,7 @@ type ModalState = {
   maxAmount: number;
 };
 
-export default function App() {
+function AuthedApp() {
   const wallet = useWallet();
 
   const [modal, setModal] = useState<ModalState>({
@@ -126,3 +127,13 @@ export default function App() {
     </div>
   );
 }
+
+export default function App() {
+  const [authed, setAuthed] = useState(false);
+  const handleAuth = useCallback(() => setAuthed(true), []);
+
+  if (!authed) return <PasswordGate onAuth={handleAuth} />;
+
+  return <AuthedApp />;
+}
+
