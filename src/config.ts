@@ -15,10 +15,21 @@ export const APTOS_NODES = [
 ];
 
 /** 預設使用第一個節點，失敗時自動切換 */
-export let currentNodeIndex = 0;
+export let currentNodeIndex = parseInt(localStorage.getItem('rpcNodeIndex') || '0');
+if (isNaN(currentNodeIndex) || currentNodeIndex >= APTOS_NODES.length) currentNodeIndex = 0;
+
 export const getNode = () => APTOS_NODES[currentNodeIndex];
+
+export const setNodeIndex = (index: number) => {
+  currentNodeIndex = index;
+  localStorage.setItem('rpcNodeIndex', index.toString());
+  window.dispatchEvent(new Event('rpcNodeChanged'));
+};
+
 export const rotateNode = () => {
   currentNodeIndex = (currentNodeIndex + 1) % APTOS_NODES.length;
+  localStorage.setItem('rpcNodeIndex', currentNodeIndex.toString());
+  window.dispatchEvent(new Event('rpcNodeChanged'));
   return getNode();
 };
 

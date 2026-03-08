@@ -3,23 +3,12 @@
  * 支援多節點輪換，避免單一節點限速問題
  */
 
-import { APTOS_NODES } from "../config";
-
-let currentIndex = 0;
-
-function getNode(): string {
-  return APTOS_NODES[currentIndex];
-}
-
-function rotateNode(): string {
-  currentIndex = (currentIndex + 1) % APTOS_NODES.length;
-  return APTOS_NODES[currentIndex];
-}
+import { APTOS_NODES, getNode, setNodeIndex, rotateNode } from "../config";
 
 /**
  * 帶重試和節點輪換的 fetch
  */
-async function aptosGet(path: string, retries = 3): Promise<unknown> {
+async function aptosGet(path: string, retries = APTOS_NODES.length): Promise<unknown> {
   let lastError: Error | null = null;
 
   for (let i = 0; i < retries; i++) {
@@ -33,6 +22,7 @@ async function aptosGet(path: string, retries = 3): Promise<unknown> {
 
       if (res.status === 429) {
         // Rate limited，換節點
+        lastError = new Error(`HTTP 429: Too Many Requests on ${node}`);
         console.warn(`[AptosAPI] Rate limited on ${node}, rotating...`);
         continue;
       }
@@ -55,7 +45,7 @@ async function aptosGet(path: string, retries = 3): Promise<unknown> {
 /**
  * POST 請求（用於 table 查詢和 view 函數）
  */
-async function aptosPost(path: string, body: unknown, retries = 3): Promise<unknown> {
+async function aptosPost(path: string, body: unknown, retries = APTOS_NODES.length): Promise<unknown> {
   let lastError: Error | null = null;
 
   for (let i = 0; i < retries; i++) {
@@ -70,6 +60,7 @@ async function aptosPost(path: string, body: unknown, retries = 3): Promise<unkn
       });
 
       if (res.status === 429) {
+        lastError = new Error(`HTTP 429: Too Many Requests on ${node}`);
         console.warn(`[AptosAPI] Rate limited on ${node}, rotating...`);
         continue;
       }
