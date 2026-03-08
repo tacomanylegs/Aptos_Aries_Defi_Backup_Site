@@ -70,6 +70,12 @@ export default function Dashboard({ userAddress, onDeposit, onWithdraw, onClaim 
   const formatAPR = (apr: number) =>
     `${apr.toFixed(2)}%`;
 
+  const calcDailyEarning = (amount: number, apr: number) =>
+    amount * (apr / 100) / 365;
+
+  const formatDailyEarning = (amount: number) =>
+    `~$${amount.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}`;
+
   const formatPercent = (rate: number) =>
     `${(rate * 100).toFixed(1)}%`;
 
@@ -239,6 +245,7 @@ export default function Dashboard({ userAddress, onDeposit, onWithdraw, onClaim 
                   <span>存款金額</span>
                   <span>存款份額</span>
                   <span>年利率</span>
+                  <span>每日收益</span>
                   <span>操作</span>
                 </div>
                 {profile.deposits.map((dep) => (
@@ -254,6 +261,11 @@ export default function Dashboard({ userAddress, onDeposit, onWithdraw, onClaim 
                     </span>
                     <span className="green">
                       {dep.supplyAPR > 0 ? formatAPR(dep.supplyAPR) : "—"}
+                    </span>
+                    <span className="daily-earning">
+                      {dep.supplyAPR > 0 && dep.amount > 0
+                        ? formatDailyEarning(calcDailyEarning(dep.amount, dep.supplyAPR))
+                        : "—"}
                     </span>
                     <div className="action-btns">
                       <button
@@ -273,6 +285,25 @@ export default function Dashboard({ userAddress, onDeposit, onWithdraw, onClaim 
                 ))}
               </div>
             )}
+
+            {/* 每日收益合計 */}
+            {profile.deposits.length > 0 && (() => {
+              const totalDaily = profile.deposits.reduce((sum, dep) => {
+                if (dep.supplyAPR > 0 && dep.amount > 0) {
+                  return sum + calcDailyEarning(dep.amount, dep.supplyAPR);
+                }
+                return sum;
+              }, 0);
+              return totalDaily > 0 ? (
+                <div className="daily-earning-summary">
+                  <span className="daily-earning-icon">💰</span>
+                  <span className="daily-earning-label">預估每日收益</span>
+                  <span className="daily-earning-total">
+                    {formatDailyEarning(totalDaily)} / 天
+                  </span>
+                </div>
+              ) : null;
+            })()}
 
             <div className={`rewards-panel ${profile.claimableRewards.length > 0 ? "rewards-panel-highlight" : ""}`}>
               <div className="rewards-header-row">

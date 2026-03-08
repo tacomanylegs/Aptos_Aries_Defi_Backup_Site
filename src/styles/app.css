@@ -343,7 +343,7 @@ a:hover {
 
 .deposits-header {
   display: grid;
-  grid-template-columns: 80px 1fr 1fr 80px 140px;
+  grid-template-columns: 80px 1fr 1fr 80px 100px 140px;
   gap: 12px;
   padding: 10px 16px;
   background: var(--bg-hover);
@@ -355,7 +355,7 @@ a:hover {
 
 .deposits-row {
   display: grid;
-  grid-template-columns: 80px 1fr 1fr 80px 140px;
+  grid-template-columns: 80px 1fr 1fr 80px 100px 140px;
   gap: 12px;
   padding: 12px 16px;
   border-top: 1px solid var(--border);
@@ -373,6 +373,41 @@ a:hover {
 .action-btns {
   display: flex;
   gap: 6px;
+}
+
+.daily-earning {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffd866;
+}
+
+.daily-earning-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(255, 216, 102, 0.10), rgba(63, 185, 80, 0.08));
+  border: 1px solid rgba(255, 216, 102, 0.22);
+}
+
+.daily-earning-icon {
+  font-size: 20px;
+}
+
+.daily-earning-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.daily-earning-total {
+  margin-left: auto;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffd866;
+  letter-spacing: 0.02em;
 }
 
 .profile-actions {
