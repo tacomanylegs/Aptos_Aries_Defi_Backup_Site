@@ -119,6 +119,60 @@ export async function getAccountResources(address: string): Promise<Array<{ type
   return result as Array<{ type: string; data: unknown }>;
 }
 
+/**
+ * 取得幣種餘額
+ * 支援 Coin 和 Fungible Asset (FA) 兩種格式
+ * @param address 帳號地址
+ * @param coinType Coin 類型（用於舊版 Coin 查詢）
+ * @param faMetadata FA Metadata 地址（用於 FA 格式查詢；可選）
+ */
+export async function getWalletBalance(
+  address: string,
+  coinType: string,
+  faMetadata?: string
+): Promise<number> {
+  console.log(`[getWalletBalance] Fetching balance for ${address} coinType=${coinType} faMetadata=${faMetadata}`);
+
+  // 1. 優先用 FA 查詢（primary_fungible_store::balance）
+  if (faMetadata) {
+    try {
+      const result = await viewFunction(
+        "0x1::primary_fungible_store::balance",
+        ["0x1::fungible_asset::Metadata"],
+        [address, faMetadata]
+      );
+      console.log(`[getWalletBalance] FA balance result:`, result);
+      if (result && result.length > 0 && Number(result[0]) > 0) {
+        return Number(result[0]);
+      }
+    } catch (err) {
+      console.warn(`[getWalletBalance] FA balance failed for ${faMetadata}:`, err);
+    }
+  }
+
+  // 2. 嘗試 0x1::coin::balance（支援已配對的 Coin/FA）
+  try {
+    const result = await viewFunction("0x1::coin::balance", [coinType], [address]);
+    console.log(`[getWalletBalance] coin::balance result:`, result);
+    if (result && result.length > 0 && Number(result[0]) > 0) {
+      return Number(result[0]);
+    }
+  } catch (err) {
+    console.warn(`[getWalletBalance] coin::balance failed for ${coinType}:`, err);
+  }
+
+  // 3. 備用：直接查詢 CoinStore 資源
+  try {
+    const resourceType = `0x1::coin::CoinStore<${coinType}>`;
+    const resource = await getAccountResource<{ coin: { value: string } }>(address, resourceType);
+    console.log(`[getWalletBalance] CoinStore resource:`, resource);
+    return resource ? Number(resource.coin.value) : 0;
+  } catch (err) {
+    console.warn(`[getWalletBalance] CoinStore fallback failed:`, err);
+    return 0;
+  }
+}
+
 /** 查詢 Table Item */
 export async function getTableItem<T>(
   tableHandle: string,

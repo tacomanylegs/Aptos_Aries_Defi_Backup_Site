@@ -51,6 +51,22 @@ export const LZ_USDT_COIN_TYPE =
 export const LZ_USDC_COIN_TYPE =
   "0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDC";
 
+// ============================================================
+// Fungible Asset (FA) Metadata 地址
+// 用於查詢錢包中以 FA 格式存儲的原生代幣餘額
+// ============================================================
+
+/** 原生 Tether USDT FA Metadata 地址 */
+export const USDT_FA_METADATA =
+  "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b";
+
+/** 原生 USDC FA Metadata 地址 */
+export const USDC_FA_METADATA =
+  "0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b";
+
+/** APT FA Metadata 地址（APT 也已遷移為 FA） */
+export const APT_FA_METADATA = "0xa";
+
 /** Aptos Coin（Aries 獎勵） */
 export const APT_COIN_TYPE = "0x1::aptos_coin::AptosCoin";
 
@@ -63,6 +79,8 @@ export interface AssetConfig {
   decimals: number;
   coinType: string;
   icon: string;
+  /** 原生 FA Metadata 地址，用於查詢錢包中 FA 格式的餘額 */
+  faMetadata?: string;
 }
 
 /** Amnis Staked APT */
@@ -75,6 +93,7 @@ export const SUPPORTED_ASSETS: AssetConfig[] = [
     symbol: "USDT",
     decimals: 6,
     coinType: USDT_COIN_TYPE,
+    faMetadata: USDT_FA_METADATA,
     icon: "💵",
   },
   {
@@ -82,6 +101,7 @@ export const SUPPORTED_ASSETS: AssetConfig[] = [
     symbol: "USDC",
     decimals: 6,
     coinType: USDC_COIN_TYPE,
+    faMetadata: USDC_FA_METADATA,
     icon: "💲",
   },
   {

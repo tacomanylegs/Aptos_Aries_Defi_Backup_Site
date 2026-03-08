@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SUPPORTED_ASSETS, DEFAULT_PROFILES } from "../config";
 import {
   buildDepositPayload,
   buildWithdrawPayload,
   TxPayload,
 } from "../lib/aries";
-import { getTxExplorerUrl } from "../hooks/useWallet";
+import { getTxExplorerUrl, useWallet } from "../hooks/useWallet";
+import { getWalletBalance } from "../lib/aptos";
 
 interface TransactionModalProps {
   mode: "deposit" | "withdraw";
@@ -33,8 +34,22 @@ export default function TransactionModal({
   const [status, setStatus] = useState<"idle" | "pending" | "success" | "error">("idle");
   const [txHash, setTxHash] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
+
+  const wallet = useWallet();
 
   const selectedAsset = SUPPORTED_ASSETS.find((a) => a.coinType === selectedCoinType) ?? SUPPORTED_ASSETS[0];
+
+  useEffect(() => {
+    if (mode === "deposit" && wallet.address && selectedCoinType) {
+      console.log(`[TransactionModal] mode=deposit, address=${wallet.address}, coin=${selectedCoinType}`);
+      getWalletBalance(wallet.address, selectedCoinType, selectedAsset.faMetadata).then((balanceRaw) => {
+        const bal = balanceRaw / 10 ** selectedAsset.decimals;
+        console.log(`[TransactionModal] balance fetched = ${bal}`);
+        setWalletBalance(bal);
+      });
+    }
+  }, [mode, wallet.address, selectedCoinType, selectedAsset.decimals]);
 
   const parseAmount = (): bigint | null => {
     const num = parseFloat(amountStr);
@@ -171,7 +186,14 @@ export default function TransactionModal({
 
               {!withdrawAll && (
                 <div className="form-group">
-                  <label className="form-label">金額（{selectedAsset.symbol}）</label>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <label className="form-label">金額（{selectedAsset.symbol}）</label>
+                    {mode === "deposit" && (
+                      <small className="text-muted" style={{ cursor: "pointer", color: "var(--color-primary, #3b82f6)" }} onClick={() => setAmountStr(walletBalance.toString())}>
+                        錢包餘額: {walletBalance.toFixed(6)}
+                      </small>
+                    )}
+                  </div>
                   <div className="input-row">
                     <input
                       type="number"
@@ -190,6 +212,17 @@ export default function TransactionModal({
                           setAmountStr(defaultMaxAmount.toFixed(selectedAsset.decimals))
                         }
                         disabled={isSubmitting}
+                      >
+                        MAX
+                      </button>
+                    )}
+                    {mode === "deposit" && (
+                      <button
+                        className="btn btn-sm btn-outline"
+                        onClick={() =>
+                          setAmountStr(walletBalance.toString())
+                        }
+                        disabled={isSubmitting || walletBalance <= 0}
                       >
                         MAX
                       </button>
