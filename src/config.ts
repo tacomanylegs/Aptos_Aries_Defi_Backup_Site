@@ -8,6 +8,7 @@ export const CONTROLLER = "0x9770fa9c725cbd97eb50b2be5f7416efdfd1f1554beb0750d4d
 
 /** Aptos 主網節點（可更換為其他節點避免限速）*/
 export const APTOS_NODES = [
+  "https://rpc.ankr.com/premium-http/aptos/7256475a00c26d981705cb60b7ef6c645643479c1b27fa6344854caada26ef25/v1",
   "https://1rpc.io/aptos/v1",
   "https://mainnet.aptoslabs.com/v1",
   "https://fullnode.mainnet.aptoslabs.com/v1",
