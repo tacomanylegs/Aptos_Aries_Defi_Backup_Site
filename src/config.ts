@@ -8,10 +8,10 @@ export const CONTROLLER = "0x9770fa9c725cbd97eb50b2be5f7416efdfd1f1554beb0750d4d
 
 /** Aptos 主網節點（可更換為其他節點避免限速）*/
 export const APTOS_NODES = [
+  "https://1rpc.io/aptos/v1",
+  "https://mainnet.aptoslabs.com/v1",
   "https://fullnode.mainnet.aptoslabs.com/v1",
-  "https://aptos-mainnet.nodereal.io/v1/f026e0da1c574f7ca1bd4cc0e53a6453/v1",
-  "https://rpc.ankr.com/http/aptos/v1",
-  "https://aptos-mainnet-rpc.publicnode.com/v1",
+  "https://aptos.api.onfinality.io/v1/public",
 ];
 
 /** 預設使用第一個節點，失敗時自動切換 */
